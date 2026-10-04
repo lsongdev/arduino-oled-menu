@@ -1,0 +1,32 @@
+name: build
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  examples:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        example: [basic, icons, submenu]
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install PlatformIO
+        run: python -m pip install --upgrade platformio
+
+      - name: Build example
+        run: >-
+          pio ci examples/${{ matrix.example }}
+          --lib=.
+          --board=uno
+          --project-option="lib_deps=adafruit/Adafruit SSD1306 @ ^2.5.13"
